@@ -15,14 +15,14 @@ class UserModel(db.Model):
 
     def json(self):
         # Don't send the password in the result, just the username
-        return {'username': self.username}
+        return {'id': self.id, 'username': self.username}
 
     @classmethod
-    def find_by_username(cls, username):
+    def find_user_by_username(cls, username):
         return cls.query.filter_by(username=username).first()
 
     @classmethod
-    def find_by_id(cls, _id):
+    def find_user_by_id(cls, _id):
         return cls.query.filter_by(id=_id).first()
 
     @classmethod
@@ -33,9 +33,6 @@ class UserModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-
     def delete_user(self):
         db.session.delete(self)
         db.session.commit()
-
-

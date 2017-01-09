@@ -1,6 +1,6 @@
-import sqlite3
 from db import db
 from models.brand import BrandModel
+
 
 # extend class from db.Model for SQLAlchemy
 class ItemModel(db.Model):
@@ -27,7 +27,7 @@ class ItemModel(db.Model):
 
     def json(self):
         brand = BrandModel.find_brand_by_id(self.brand_id)
-        return {'name': self.name, "price": self.price, 'color': self.color, 'brand': brand.name}
+        return {'id': self.id, 'name': self.name, 'price': self.price, 'color': self.color, 'brand': brand.name}
 
     @classmethod
     def find_all_items(cls):
@@ -35,10 +35,14 @@ class ItemModel(db.Model):
 
     # A class method as it should return an ItemModel-based object
     @classmethod
-    def find_item_by_name(cls, name):
+    def find_item_by_name(cls, brand_id, name):
         # Return ItemModel object (cls) by running a query through SQLAlchemy. .first() extension is just like
         # SQL's "LIMIT 1"
-        return cls.query.filter_by(name=name).first()
+        return cls.query.filter_by(brand_id=brand_id, name=name).first()
+
+    @classmethod
+    def find_item_by_id(cls, _id):
+        return cls.query.filter_by(id=_id).first()
 
     # Not a class method as it is inserting itself, which should be an object
     def add_or_update_item(self):

@@ -24,7 +24,7 @@ class Brand(Resource):
 
     @jwt_required()
     def post(self, name):
-        if (BrandModel.find_brand_by_name(name)):
+        if BrandModel.find_brand_by_name(name):
             return {'message': "A brand with the name '{}' already exists".format(name)}, 400
 
         request_data = Brand.parse_brand_data()
@@ -33,7 +33,7 @@ class Brand(Resource):
         try:
             brand.add_or_update_brand()
         except:
-            return {'message': "Add brand failed for '{}'".format(name)}, 500 #Internal Server Error
+            return {'message': "Add brand failed for '{}'".format(name)}, 500
 
         return brand.json(), 201
 
@@ -54,11 +54,11 @@ class Brand(Resource):
 
         return brand.json()
 
-
     @jwt_required()
     def delete(self, name):
         brand = BrandModel.find_brand_by_name(name)
-        if not brand: return {'message': "A brand with the name '{}' does not exist".format(name)}, 400
+        if not brand:
+            return {'message': "A brand with the name '{}' does not exist".format(name)}, 400
 
         try:
             brand.delete_brand()

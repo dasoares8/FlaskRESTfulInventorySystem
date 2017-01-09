@@ -1,5 +1,5 @@
-import sqlite3
 from db import db
+
 
 class BrandModel(db.Model):
     __tablename__ = 'brands'
@@ -14,7 +14,7 @@ class BrandModel(db.Model):
         self.manufacturer = manufacturer
 
     def json(self):
-        return {'name': self.name, "manufacturer": self.manufacturer}
+        return {'id': self.id, 'name': self.name, "manufacturer": self.manufacturer}
 
     @classmethod
     def find_all_brands(cls):

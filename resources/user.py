@@ -15,13 +15,15 @@ class User(Resource):
         return request_data
 
     def get(self, username):
-        user = UserModel.find_by_username(username)
-        if(user): return user.json()
+        user = UserModel.find_user_by_username(username)
+        if user:
+            return user.json()
         return {'message': "A user with the username '{}' does not exist".format(username)}, 404
 
     def post(self, username):
-        user = UserModel.find_by_username(username)
-        if (user): return {'message': "A user with the username '{}' already exists".format(username)}, 400
+        user = UserModel.find_user_by_username(username)
+        if user:
+            return {'message': "A user with the username '{}' already exists".format(username)}, 400
         request_data = User.parse_user_data()
         user = UserModel(None, username, request_data['password'])
         try:
@@ -33,7 +35,7 @@ class User(Resource):
 
     def put(self, username):
         request_data = User.parse_user_data()
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_user_by_username(username)
 
         if user:
             user.password = request_data['password']
@@ -48,7 +50,7 @@ class User(Resource):
         return {'message': "Added or updated user '{}'".format(username)}
 
     def delete(self, username):
-        user = UserModel.find_by_username(username)
+        user = UserModel.find_user_by_username(username)
         if not user: return {'message': "A user with the username '{}' does not exist".format(username)}, 400
 
         try:
@@ -57,6 +59,7 @@ class User(Resource):
             return {'message': "User '{}' failed to be deleted".format(username)}, 500
 
         return {'message': "User '{}' has been deleted".format(username)}
+
 
 class Users(Resource):
     def get(self):
