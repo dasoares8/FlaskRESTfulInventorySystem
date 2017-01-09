@@ -17,6 +17,16 @@ This is code that demonstrates
   - Usage of SQAlchemy as an ORM (vs. using direct SQL)
   - Usage of FlaskJWT for authorization
   - General Python3 OO coding, including inheritance
+
+## Prerequisites:
+Written on Python 3.4.3. Your virtual envionment will require the following :
+  - FlaskRESTful
+  - FlaskJWT
+  - Flask-SQLAlchemy
+All other necessary packages will come from those.
   
+## To run the code:
+in the main directory at the prompt, type "python app.py"
+
 I have used Postman for REST API testing (will post the code for that soon). 
 This has been developed using JetBrains PyCharm Community Edition. 
