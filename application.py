@@ -7,28 +7,32 @@ from resources.item import Item, Items
 from resources.brand import Brand, Brands
 from resources.threeD_inventory_slots import ThreeDInventorySlot, ThreeDInventorySlots
 
+application = Flask(__name__)
 
-app = Flask(__name__)
-# Location of the DB file; it's in our root dir (src). Also know that you can have any DB here (Oracle, SQLServer, etc.)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+# Determine whether running in development (SQLite) or AWS Elastic Beanstalk (MySQL) env
+if __name__ == '__main__':
+    application.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.db'
+else:
+    application.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://soada01:acloudguru@aake81314qtwxl.cbdmvzrbabca.us-east-1.rds.amazonaws.com:3306/ebdb'
+
 # Shuts off the Flask SQL Alchemy modification tracker, not the SQLAlchemy specific one, Flask one not needed
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+application.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # key is simple for test purposes, but if used for product, should be secret and secure (long and complicated)
-app.secret_key = 'david'
-api = Api(app)
+application.secret_key = 'david'
+api = Api(application)
 
-
-# Use a Flask decorator, do this before anything else the app does
-@app.before_first_request
+@application.before_first_request
 def create_tables():
-    db.create_all()
+    if __name__ == '__main__':
+        db.create_all()
 
 # use app, and our authenticate and identity functions
 # JWT extension creates a new endpoint, /auth. When we call /auth, we send it the username and password
 # JWT sends these over to the authenticate function
 # once that returns, the /auth endpoint sends a jwt token. That token is sent with a payload to identity()
 # To test this out, in postman, run a POST to /auth, copy the token (only)
-jwt = JWT(app, authenticate, identity)
+jwt = JWT(application, authenticate, identity)
+
 
 # Resource declarations
 api.add_resource(Item, '/item/<int:_id>')
@@ -45,5 +49,6 @@ api.add_resource(ThreeDInventorySlots, '/three_dinvslots')
 # add 'host=0.0.0.0' to app.run() for running this on remote server
 if __name__ == '__main__':
     from db import db
-    db.init_app(app)
-    app.run(port=5000, debug=True)
+    db.init_app(application)
+    application.debug = True
+    application.run()
